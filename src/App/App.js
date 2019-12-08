@@ -4,10 +4,14 @@ import "../stylesheets/App.css";
 import SurveyController from "../components/SurveyController";
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+  }
+
   render() {
     return (
       <div className="App">
-        <SurveyController />
+        <SurveyController access={this.props.access} />
       </div>
     );
   }

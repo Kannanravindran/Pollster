@@ -14,17 +14,20 @@ class SurveyController extends Component {
     this.state = {
       email: "",
       password: "",
-      uid: "",
+      uid: this.props.access,
       answers: {},
-      isLoggedIn: true,
+      isLoggedIn: false,
       isSubmitted: false,
       surveyId: ""
     };
-
-    console.log("uid: ", this.state.uid);
   }
 
-  
+  componentDidMount = () => {
+    if (this.state.uid !== "") {
+      this.setState({ isLoggedIn: true });
+    }
+  };
+
   getParams = location => {
     const searchParams = new URLSearchParams(location.search);
     return {
