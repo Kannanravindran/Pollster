@@ -1,31 +1,40 @@
-.App {
+body {
+  color: #fff;
+  font: normal 400 18px "PT Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 {
   text-align: center;
 }
 
 .App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+pre {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: #333;
+  padding: 5px;
+  width: auto;
+  border: 1px solid #999;
+  border-radius: 2px;
 }
 
 @keyframes App-logo-spin {
@@ -35,4 +44,192 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.card {
+  max-width: 80%;
+  height: 80vh;
+  padding: 20px 20px 20px 20px;
+  position: relative;
+  background-color: #fff;
+  border: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  margin: 20px auto;
+  opacity: 1;
+  color: #000;
+  line-height: 49px;
+  overflow-y: auto;
+}
+
+label {
+  display: block;
+  font-size: 20px;
+  font-weight: bold;
+  color: rgb(3, 2, 13);
+  margin-bottom: 10px;
+}
+
+.nameInput {
+  padding: 10px;
+  font-size: 18px;
+  width: 300px;
+  border-radius: 4px;
+  border: 1px solid #aaa;
+  text-indent: 5px;
+  outline: none;
+  transition: all 0.3s linear;
+}
+
+.nameInput:not(:last-child) {
+  margin-bottom: 10px;
+}
+
+.nameInput:focus {
+  border: 1px solid rgb(74, 71, 232);
+}
+
+.nameInput::placeholder {
+  color: rgb(158, 162, 167);
+  font-size: 18px;
+  letter-spacing: 2px;
+}
+
+.check-container {
+  display: block;
+  position: relative;
+  background-color: #ccc;
+  cursor: pointer;
+  font-size: 20px;
+  text-align: center;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  max-width: 50%;
+}
+
+.check-container:not(:last-child) {
+  margin-bottom: 10px;
+}
+
+.check-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.check-container:hover {
+  background-color: rgb(95, 129, 190);
+}
+
+.check-container.label-checked {
+  background-color: rgb(48, 94, 153);
+}
+
+.submitButton {
+  padding: 0px 0px;
+  margin: 20px;
+  width: 200px;
+  margin-bottom: 5px;
+  border: none;
+  border-radius: 3px;
+  background: rgb(84, 76, 235);
+  font-size: 18px;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 1px 3px 5px rgba(111, 104, 106, 0.87);
+  transition: all 0.3s ease-in-out;
+}
+
+.submitButton:hover {
+  background: rgba(57, 50, 207, 0.65);
+}
+
+.submitButton:focus {
+  background: rgb(59, 52, 182);
+}
+
+.login-button {
+  padding: 13px 25px;
+  margin: 20px;
+  width: 320px;
+  margin-bottom: 5px;
+  border: none;
+  border-radius: 3px;
+  background: rgb(84, 76, 235);
+  font-size: 18px;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 1px 3px 5px rgba(111, 104, 106, 0.87);
+  transition: all 0.3s ease-in-out;
+}
+
+.login-button:hover {
+  background: rgba(57, 50, 207, 0.65);
+}
+
+.login-button:focus {
+  background: rgb(59, 52, 182);
+}
+
+.google-Button {
+  padding: 15px 25px 15px 15px;
+  margin: 5px;
+  border: 1px solid rgba(5, 3, 3, 0.92);
+  border-radius: 3px;
+  background: rgba(204, 196, 222, 0.12);
+  font-size: 27px;
+  /* font-weight: bold; */
+  color: rgb(11, 11, 11);
+  cursor: pointer;
+  transition: all 0.3s linear;
+}
+
+.large-txt {
+  font-size: 35px;
+  font-weight: bolder;
+  color: rgb(196, 190, 196);
+}
+
+.icon {
+  margin-right: 10px;
+  transition: color 0.1s linear;
+}
+
+.google-Button:hover {
+  border: 1px solid rgba(250, 244, 244, 0.99);
+  background-color: rgba(236, 61, 85, 0.94);
+  color: #fff;
+}
+
+.google-Button:focus {
+  color: #fff;
+}
+
+.login-tab {
+  text-align: center;
+  padding: 20px;
+  margin: 0 auto;
+  margin-top: 40px;
+  max-width: 400px;
+  border: 1px solid #fff;
+  background: rgba(103, 106, 105, 0.54);
+}
+
+.survey-title {
+  font-size: 25px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-top: -10px;
+  top: 10px;
+  left: 70px;
+}
+
+.survey-question:not(:last-child)::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 1px;
+  margin-top: 15px;
+  background: rgba(153, 150, 153, 0.89);
 }
