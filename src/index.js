@@ -6,7 +6,10 @@ import App from "./App/App";
 import registerServiceWorker from "./registerServiceWorker";
 
 const searchParams = new URLSearchParams(window.location.search);
-const access = searchParams.get("access") || "";
+const accessCode = searchParams.get("code") || "";
 
-ReactDOM.render(<App access={access} />, document.getElementById("root"));
+ReactDOM.render(
+  <App accessCode={accessCode} />,
+  document.getElementById("root")
+);
 registerServiceWorker();

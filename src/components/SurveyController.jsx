@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import Login from "./Login";
 import { Container, Row, Col } from "react-bootstrap";
-import GuacSurvey from "./forms/Guac";
-import DriveSurvey from "./forms/Drive";
+import Survey from "./forms/Survey";
 import SurveyList from "./forms/SurveyList";
+import axios from "axios";
 
-var uuid = require("uuid");
+var surveyData = require("../data/surveyData.json");
+var config = require("../config.json");
 
 class SurveyController extends Component {
   constructor(props) {
@@ -14,48 +15,73 @@ class SurveyController extends Component {
     this.state = {
       email: "",
       password: "",
-      uid: this.props.access,
+      uid: "",
       answers: {},
-      isLoggedIn: false,
+      isLoggedIn: null,
       isSubmitted: false,
       surveyId: ""
     };
   }
 
-  componentDidMount = () => {
-    if (this.state.uid !== "") {
-      this.setState({ isLoggedIn: true });
-    }
+  validateAccessCode = accessCode => {
+    console.log(accessCode);
+    axios
+      .get("http://127.0.0.1:5000/api/access/?code=" + accessCode)
+      .then(res => {
+        console.log(res.data.isAuthenticated);
+        const isAuthenticated = res.data.isAuthenticated;
+        if (isAuthenticated) {
+          this.setState({ uid: accessCode, isLoggedIn: true });
+        } else {
+          this.setState({ isLoggedIn: false });
+        }
+      });
   };
 
-  getParams = location => {
-    const searchParams = new URLSearchParams(location.search);
-    return {
-      query: searchParams.get("access") || ""
-    };
-  };
-
-  handleLogout = () => {
-    this.setState({ isLoggedIn: false, userid: "" });
-  };
-  handleSurveySelect = e => {
-    var surveyid = e.target.getAttribute("surveyid");
-
-    console.log("here ", e.target);
-    this.setState({ surveyId: surveyid });
-  };
-
-  handleSurveySubmit = e => {
-    // firebase.database().ref('Csurvey/'+ this.state.uid).set({
-    //     Username: this.state.Username,
-    //     email: this.state.email,
-    //     Answers: this.state.answers
-    // });
-    this.setState({ isSubmitted: true, surveyId: "" });
+  handleSaveDraft = e => {
+    axios
+      .post("http://127.0.0.1:5000/api/save_draft/", {
+        uid: this.state.uid,
+        answers: this.state.answers
+      })
+      .then(res => {
+        console.log(res);
+        console.log(res.data);
+      });
+    this.setState({ surveyId: "" });
     e.preventDefault();
   };
 
-  answerSelected = e => {
+  componentDidMount = () => {
+    this.validateAccessCode(this.props.accessCode);
+  };
+
+  handleLogout = () => {
+    this.setState({ isLoggedIn: false, uid: "" });
+  };
+
+  handleSurveySelect = e => {
+    var surveyid = e.target.getAttribute("surveyid");
+    this.setState({ surveyId: surveyid });
+  };
+
+  updateAnswers = e => {
+    var answers = this.state.answers;
+    var value = e.target.value;
+    var question = e.target.getAttribute("data-question");
+    var survey = e.target.getAttribute("data-survey");
+    if (!(survey in answers)) {
+      answers[survey] = {};
+    }
+    answers[survey][question] = value;
+    this.setState({ answers });
+  };
+
+  handleRangeSelect = e => {
+    this.updateAnswers(e);
+  };
+
+  handleRadioInput = e => {
     if (e.target.checked) {
       e.target.parentNode.classList.add("label-checked");
     }
@@ -67,22 +93,26 @@ class SurveyController extends Component {
         radio.parentNode.classList.remove("label-checked");
       }
     });
-    var answers = this.state.answers;
-    var value = e.target.value;
-    var name = e.target.name;
-    answers[name] = value;
-    this.setState({ answers });
-    console.log(this.state);
+    this.updateAnswers(e);
   };
 
-  changeUsername = (Username, email) => {
-    this.setState({ Username, email, isLoggedIn: true });
-    console.log(Username, email);
-  };
-
-  logUser = (user, Username, email) => {
-    this.setState({ user, Username, email, isLoggedIn: true });
-    console.log(user, Username, email);
+  handleLogin = (email, password) => {
+    var bodyFormData = new FormData();
+    bodyFormData.set("emailId", email);
+    bodyFormData.set("password", password);
+    axios({
+      method: "post",
+      url: baseurl + "login/",
+      data: bodyFormData,
+      headers: { "Content-Type": "multipart/form-data" }
+    })
+      .then(function(response) {
+        this.setState({ email, isLoggedIn: true });
+        console.log(response);
+      })
+      .catch(function(response) {
+        console.log(response);
+      });
   };
 
   render() {
@@ -96,21 +126,14 @@ class SurveyController extends Component {
       this.state.isLoggedIn === true
       // && this.state.isSubmitted === false
     ) {
-      if (this.state.surveyId === "1") {
+      if (this.state.surveyId !== "") {
         currentDisplay = (
           <Container>
-            <GuacSurvey
-              handleOnClick={this.answerSelected}
-              handleOnSubmit={this.handleSurveySubmit}
-            />
-          </Container>
-        );
-      } else if (this.state.surveyId === "2") {
-        currentDisplay = (
-          <Container>
-            <DriveSurvey
-              handleOnClick={this.answerSelected}
-              handleOnSubmit={this.handleSurveySubmit}
+            <Survey
+              handleOnClick={this.handleRadioInput}
+              handleOnRange={this.handleRangeSelect}
+              handleSaveDraft={this.handleSaveDraft}
+              surveyData={surveyData[this.state.surveyId]}
             />
           </Container>
         );
@@ -118,6 +141,7 @@ class SurveyController extends Component {
         currentDisplay = (
           <Container>
             <SurveyList
+              isSubmitted={this.state.isSubmitted}
               handleOnClick={this.handleSurveySelect}
               handleLogout={this.handleLogout}
             />

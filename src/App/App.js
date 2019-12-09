@@ -11,7 +11,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <SurveyController access={this.props.access} />
+        <SurveyController accessCode={this.props.accessCode} />
       </div>
     );
   }

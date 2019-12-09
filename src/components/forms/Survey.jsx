@@ -4,10 +4,15 @@ import Slider from "./elements/Slider";
 import { Container, Row, Col } from "react-bootstrap";
 import "../../stylesheets/form.css";
 
-class GuacSurvey extends React.Component {
+class Survey extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { sliderValue: 10 };
+    var surveyData = this.props.surveyData;
+
+    this.state = {
+      sliderValue: surveyData["2"]["default"],
+      surveyData: surveyData
+    };
   }
 
   handleRangeInput = e => {
@@ -18,18 +23,20 @@ class GuacSurvey extends React.Component {
     return (
       <form onSubmit={this.props.handleOnSubmit}>
         <div className="card">
-          <h3 className="survey-title">Guacamole Survey</h3>
+          <h3 className="survey-title">{this.state.surveyData["title"]}</h3>
           <div className="survey-question">
             <Row>
               <Col md="6">
-                <h3>1. Do you like Guacamole? </h3>
+                <h3>1. {this.state.surveyData["1"]["question"]} </h3>
               </Col>
               <Col md="6">
                 <Row>
                   <Col md="6">
                     <Radio
                       type="radio"
-                      name="answer1"
+                      name={"question" + this.state.surveyData["1"]["qno"]}
+                      question={this.state.surveyData["1"]["qno"]}
+                      survey={this.state.surveyData["surveyId"]}
                       value="Y"
                       text="Yes"
                       handleOnClick={this.props.handleOnClick}
@@ -38,7 +45,8 @@ class GuacSurvey extends React.Component {
                   <Col md="6">
                     <Radio
                       type="radio"
-                      name="answer1"
+                      question={this.state.surveyData["1"]["qno"]}
+                      survey={this.state.surveyData["surveyId"]}
                       value="N"
                       text="No"
                       handleOnClick={this.props.handleOnClick}
@@ -49,32 +57,42 @@ class GuacSurvey extends React.Component {
             </Row>
             <Row>
               <Col md="12">
-                <h3>2. How many times do you eat Guacamole?</h3>
+                <h3>2. {this.state.surveyData["2"]["question"]}</h3>
               </Col>
             </Row>
             <Row>
               <Col md="12">
                 <div className="sliderContainer">
                   <label>
-                    <h4>{this.state.sliderValue} / 40</h4>
+                    <h4>
+                      {this.state.sliderValue} /{" "}
+                      {this.state.surveyData["2"]["max"]}
+                    </h4>
                   </label>
                   <Slider
-                    min="0"
-                    max="40"
-                    value={this.state.sliderValue}
-                    id="customRange3"
+                    min={this.state.surveyData["2"]["min"]}
+                    max={this.state.surveyData["2"]["max"]}
+                    defaultvalue={this.state.sliderValue}
+                    id="question2"
+                    question={this.state.surveyData["2"]["qno"]}
+                    survey={this.state.surveyData["surveyId"]}
                     onInput={this.handleRangeInput}
-                    // onChange={this.handleRangeInput}
+                    onChange={this.props.handleOnRange}
                   />
                 </div>
               </Col>
             </Row>
           </div>
-          <input className="submitButton" type="submit" value="Save" />
+          <input
+            className="submitButton"
+            type="submit"
+            value="Save"
+            onClick={this.props.handleSaveDraft}
+          />
         </div>
       </form>
     );
   };
 }
 
-export default GuacSurvey;
+export default Survey;

@@ -29,7 +29,9 @@ class DriveSurvey extends React.Component {
                   <Col md="6">
                     <Radio
                       type="radio"
-                      name="answer2"
+                      name="question1"
+                      question="1"
+                      survey="2"
                       value="Y"
                       text="Yes"
                       handleOnClick={this.props.handleOnClick}
@@ -38,7 +40,9 @@ class DriveSurvey extends React.Component {
                   <Col md="6">
                     <Radio
                       type="radio"
-                      name="answer2"
+                      name="question1"
+                      question="1"
+                      survey="2"
                       value="N"
                       text="No"
                       handleOnClick={this.props.handleOnClick}
@@ -61,8 +65,8 @@ class DriveSurvey extends React.Component {
                   <Slider
                     min="0"
                     max="7"
-                    value={this.state.sliderValue}
-                    id="customRange2"
+                    defaultvalue={this.state.sliderValue}
+                    id="question2"
                     onInput={this.handleRangeInput}
                   />
                 </div>

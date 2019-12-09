@@ -1,0 +1,32 @@
+{
+  "1": {
+    "title": "Guacamole Survey",
+    "surveyId": "1",
+    "1": {
+      "question": "Do you like Guacamole?",
+      "qno": "1"
+    },
+    "2": {
+      "question": "How many times do you eat Guacamole?",
+      "qno": "2",
+      "min": "0",
+      "max": "40",
+      "default": "10"
+    }
+  },
+  "2": {
+    "title": "Drive Survey",
+    "surveyId": "2",
+    "1": {
+      "question": "Do you like to Drive?",
+      "qno": "1"
+    },
+    "2": {
+      "question": "How many times do you drive in a week?",
+      "qno": "2",
+      "min": "0",
+      "max": "7",
+      "default": "2"
+    }
+  }
+}
