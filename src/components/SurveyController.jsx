@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import Login from "./Login";
 import { Container, Row, Col } from "react-bootstrap";
-import Survey from "./forms/Survey";
-import SurveyList from "./forms/SurveyList";
+import Survey from "./subComponents/Survey";
+import SurveyList from "./subComponents/SurveyList";
+import InviteUser from "./subComponents/InviteUser";
 import axios from "axios";
 
 var surveyData = require("../data/surveyData.json");
@@ -16,36 +17,74 @@ class SurveyController extends Component {
       email: "",
       password: "",
       uid: "",
+      userRole: "",
       answers: {},
       isLoggedIn: null,
       isSubmitted: false,
-      surveyId: ""
+      surveyId: "",
+      inviteUserToggle: false
     };
   }
 
-  validateAccessCode = accessCode => {
-    console.log(accessCode);
-    axios
-      .get("http://127.0.0.1:5000/api/access/?code=" + accessCode)
+  validateAccessCode = async accessCode => {
+    console.log("validation: ", accessCode);
+    var handleLogin = this.handleLogin;
+    await axios
+      .get(config.baseurl + "access/?code=" + accessCode)
       .then(res => {
         console.log(res.data.isAuthenticated);
-        const isAuthenticated = res.data.isAuthenticated;
-        if (isAuthenticated) {
-          this.setState({ uid: accessCode, isLoggedIn: true });
-        } else {
-          this.setState({ isLoggedIn: false });
-        }
+        handleLogin(
+          res.data.isAuthenticated,
+          res.data.uid,
+          "invalid access code"
+        );
+      })
+      .catch(err => {
+        console.error("error occured here ", err);
       });
   };
 
-  handleSaveDraft = e => {
-    axios
+  validateCredentials = async (email, password) => {
+    var bodyFormData = new FormData();
+    var handleLogin = this.handleLogin;
+    bodyFormData.set("emailId", email);
+    bodyFormData.set("password", password);
+    await axios({
+      method: "post",
+      url: config.baseurl + "login/",
+      data: bodyFormData,
+      headers: { "Content-Type": "multipart/form-data" }
+    })
+      .then(res => {
+        handleLogin(
+          res.data.isAuthenticated,
+          res.data.uid,
+          "invalid credentials"
+        );
+      })
+      .catch(res => {
+        console.log(res);
+      });
+  };
+
+  handleLogin = (isAuthenticated, uid, alertMsg) => {
+    if (isAuthenticated) {
+      this.setState({ uid: uid, isLoggedIn: true });
+    } else if (uid !== "") {
+      alert(alertMsg);
+      this.setState({ isLoggedIn: false });
+    } else {
+      this.setState({ isLoggedIn: false });
+    }
+  };
+
+  handleSaveDraft = async e => {
+    await axios
       .post("http://127.0.0.1:5000/api/save_draft/", {
         uid: this.state.uid,
         answers: this.state.answers
       })
       .then(res => {
-        console.log(res);
         console.log(res.data);
       });
     this.setState({ surveyId: "" });
@@ -53,7 +92,12 @@ class SurveyController extends Component {
   };
 
   componentDidMount = () => {
-    this.validateAccessCode(this.props.accessCode);
+    const accesscode = this.props.accessCode;
+    if (accesscode !== "") {
+      this.validateAccessCode(accesscode);
+    } else {
+      this.setState({ isLoggedIn: false });
+    }
   };
 
   handleLogout = () => {
@@ -63,6 +107,21 @@ class SurveyController extends Component {
   handleSurveySelect = e => {
     var surveyid = e.target.getAttribute("surveyid");
     this.setState({ surveyId: surveyid });
+  };
+
+  handleInviteUserToggle = () => {
+    this.setState({ inviteUserToggle: true });
+  };
+
+  handleInviteUser = async email => {
+    await axios
+      .post("http://127.0.0.1:5000/api/register/", {
+        emailId: email,
+        referrer: this.state.uid
+      })
+      .then(res => {
+        console.log(res.data);
+      });
   };
 
   updateAnswers = e => {
@@ -96,31 +155,15 @@ class SurveyController extends Component {
     this.updateAnswers(e);
   };
 
-  handleLogin = (email, password) => {
-    var bodyFormData = new FormData();
-    bodyFormData.set("emailId", email);
-    bodyFormData.set("password", password);
-    axios({
-      method: "post",
-      url: baseurl + "login/",
-      data: bodyFormData,
-      headers: { "Content-Type": "multipart/form-data" }
-    })
-      .then(function(response) {
-        this.setState({ email, isLoggedIn: true });
-        console.log(response);
-      })
-      .catch(function(response) {
-        console.log(response);
-      });
-  };
-
   render() {
     let currentDisplay = "";
 
     if (this.state.isLoggedIn === false) {
       currentDisplay = (
-        <Login logUser={this.logUser} changeUsername={this.changeUsername} />
+        <Login
+          validateAccessCode={this.validateAccessCode}
+          validateCredentials={this.validateCredentials}
+        />
       );
     } else if (
       this.state.isLoggedIn === true
@@ -137,6 +180,15 @@ class SurveyController extends Component {
             />
           </Container>
         );
+      } else if (this.state.inviteUserToggle === true) {
+        currentDisplay = (
+          <Container>
+            <InviteUser
+              handleInviteUser={this.handleInviteUser}
+              handleLogout={this.handleLogout}
+            />
+          </Container>
+        );
       } else {
         currentDisplay = (
           <Container>
@@ -144,16 +196,11 @@ class SurveyController extends Component {
               isSubmitted={this.state.isSubmitted}
               handleOnClick={this.handleSurveySelect}
               handleLogout={this.handleLogout}
+              handleInviteUserToggle={this.handleInviteUserToggle}
             />
           </Container>
         );
       }
-      // } else if (this.state.isSubmitted === true) {
-      //   currentDisplay = (
-      //     <div>
-      //       <h2>Thanks for taking this survey, {this.state.Username}</h2>
-      //     </div>
-      //   );
     }
 
     return <div>{currentDisplay}</div>;

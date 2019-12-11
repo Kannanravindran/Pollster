@@ -10,16 +10,18 @@ class Login extends Component {
     const password = this.refs.password.value;
 
     if (password !== "" && email !== "") {
-      this.props.changeUsername(email, password);
+      this.props.validateCredentials(email, password);
     } else {
-      alert("fill in the form");
+      alert("enter email id and password");
     }
-
-    // console.log(Username);
     e.preventDefault();
   };
 
-  handleAccessSubmit = () => {};
+  handleAccessSubmit = e => {
+    const accessCode = this.refs.access.value;
+    this.props.validateAccessCode(accessCode);
+    e.preventDefault();
+  };
 
   render() {
     return (

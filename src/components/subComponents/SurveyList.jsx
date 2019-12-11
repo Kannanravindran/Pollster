@@ -43,6 +43,18 @@ class SurveyList extends React.Component {
             </Col>
           </Row>
           <br />
+          <br />
+          <Row>
+            <Col>
+              <Button
+                className="btn btn-secondary survey-item"
+                onClick={this.props.handleInviteUserToggle}
+              >
+                Invite user
+              </Button>
+            </Col>
+          </Row>
+          <br />
           <Row>
             <Col>
               <Button
