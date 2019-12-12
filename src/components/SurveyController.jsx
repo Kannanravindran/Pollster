@@ -16,23 +16,25 @@ class SurveyController extends Component {
     this.state = {
       email: "",
       password: "",
-      uid: "",
-      userRole: "",
+      user: {
+        uid: "",
+        userRole: "",
+        isSubmitted: false
+      },
       answers: {},
       isLoggedIn: null,
-      isSubmitted: false,
       surveyId: "",
-      inviteUserToggle: false
+      inviteUserToggle: true
     };
   }
 
   validateAccessCode = async accessCode => {
-    console.log("validation: ", accessCode);
+    // console.log("validation: ", accessCode);
     var handleLogin = this.handleLogin;
     await axios
       .get(config.baseurl + "access/?code=" + accessCode)
       .then(res => {
-        console.log(res.data.isAuthenticated);
+        // console.log(res.data.isAuthenticated);
         handleLogin(
           res.data.isAuthenticated,
           res.data.uid,
@@ -80,11 +82,11 @@ class SurveyController extends Component {
 
   handleSaveDraft = async e => {
     await axios
-      .post("http://127.0.0.1:5000/api/save_draft/", {
+      .post(config.baseurl + "save_draft/", {
         uid: this.state.uid,
         answers: this.state.answers
       })
-      .then(res => {
+      .catch(res => {
         console.log(res.data);
       });
     this.setState({ surveyId: "" });
@@ -93,7 +95,7 @@ class SurveyController extends Component {
 
   componentDidMount = () => {
     const accesscode = this.props.accessCode;
-    if (accesscode !== "") {
+    if (accesscode !== "" && !this.state.isLoggedIn) {
       this.validateAccessCode(accesscode);
     } else {
       this.setState({ isLoggedIn: false });
@@ -113,15 +115,12 @@ class SurveyController extends Component {
     this.setState({ inviteUserToggle: true });
   };
 
-  handleInviteUser = async email => {
-    await axios
-      .post("http://127.0.0.1:5000/api/register/", {
-        emailId: email,
-        referrer: this.state.uid
-      })
-      .then(res => {
-        console.log(res.data);
-      });
+  handleInviteUser = async inviteData => {
+    inviteData.ref = this.state.uid;
+    console.log(inviteData);
+    await axios.post(config.baseurl + "register/", inviteData).then(res => {
+      console.log(res.data);
+    });
   };
 
   updateAnswers = e => {

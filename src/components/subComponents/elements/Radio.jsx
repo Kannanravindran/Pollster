@@ -12,7 +12,7 @@ const Radio = ({
   return (
     <label className="check-container">
       <input
-        type={type}
+        type="radio"
         name={name}
         data-question={question}
         data-survey={survey}

@@ -33,7 +33,6 @@ class Survey extends React.Component {
                 <Row>
                   <Col md="6">
                     <Radio
-                      type="radio"
                       name={"question" + this.state.surveyData["1"]["qno"]}
                       question={this.state.surveyData["1"]["qno"]}
                       survey={this.state.surveyData["surveyId"]}
@@ -44,7 +43,6 @@ class Survey extends React.Component {
                   </Col>
                   <Col md="6">
                     <Radio
-                      type="radio"
                       question={this.state.surveyData["1"]["qno"]}
                       survey={this.state.surveyData["surveyId"]}
                       value="N"

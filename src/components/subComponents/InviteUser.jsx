@@ -6,14 +6,33 @@ class InviteUser extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { toastMsg: "" };
+    this.state = { toastMsg: "", surveyids: [] };
   }
 
+  handleCheckboxSelect = e => {
+    let surveyids = this.state.surveyids;
+    const newSurveyid = e.target.value;
+    if (surveyids.includes(newSurveyid)) {
+      surveyids.splice(surveyids.indexOf(newSurveyid), 1);
+    } else {
+      surveyids.push(newSurveyid);
+    }
+    this.setState({ surveyids });
+  };
+
   handleInviteData = e => {
-    const email = this.refs.email.value;
-    const toastMsg = email + " has been invited";
-    this.setState({ toastMsg: toastMsg });
-    this.props.handleInviteUser(email);
+    let toastMsg = "";
+    if (this.state.surveyids.length > 0) {
+      const email = this.refs.email.value;
+      let inviteData = this.state;
+      inviteData.email = email;
+      toastMsg = email + " has been invited";
+      this.props.handleInviteUser(inviteData);
+      e.target.reset();
+    } else {
+      toastMsg = "select at least one survey";
+    }
+    this.setState({ toastMsg });
     e.preventDefault();
   };
 
@@ -36,6 +55,7 @@ class InviteUser extends React.Component {
                   placeholder="Email Id"
                   autoFocus={true}
                   ref="email"
+                  required
                 />
               </Col>
             </Row>
@@ -45,6 +65,32 @@ class InviteUser extends React.Component {
               </Col>
             </Row>
             <br />
+            <Row className="justify-content-md-center">
+              <Col md="3">
+                <Row>
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="surveySelect"
+                      value="1"
+                      onClick={this.handleCheckboxSelect}
+                    />{" "}
+                    Guacamole Survey
+                  </label>
+                </Row>
+                <Row>
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="surveySelect"
+                      value="2"
+                      onClick={this.handleCheckboxSelect}
+                    />{" "}
+                    Drive Survey
+                  </label>
+                </Row>
+              </Col>
+            </Row>
             <Row>
               <Col>
                 <input
