@@ -1,6 +1,8 @@
 import React from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import "../../stylesheets/form.css";
+import axios from "axios";
+var config = require("../../config.json");
 
 class InviteUser extends React.Component {
   constructor(props) {
@@ -26,13 +28,15 @@ class InviteUser extends React.Component {
       const email = this.refs.email.value;
       let inviteData = this.state;
       inviteData.email = email;
-      toastMsg = email + " has been invited";
-      this.props.handleInviteUser(inviteData);
+      inviteData.ref = this.props.uid;
+      axios.post(config.baseurl + "register/", inviteData).then(res => {
+        console.log(res.data);
+      });
+      this.setState({ toastMsg, surveyids: [] });
       e.target.reset();
     } else {
       toastMsg = "select at least one survey";
     }
-    this.setState({ toastMsg });
     e.preventDefault();
   };
 

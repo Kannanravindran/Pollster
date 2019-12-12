@@ -12,18 +12,16 @@ var config = require("../config.json");
 class SurveyController extends Component {
   constructor(props) {
     super(props);
-
+    //
     this.state = {
       email: "",
       password: "",
-      user: {
-        uid: "",
-        userRole: "",
-        isSubmitted: false
-      },
+      uid: "",
+      role: "",
       answers: {},
       isLoggedIn: null,
       surveyId: "",
+      isSubmitted: false,
       inviteUserToggle: true
     };
   }
@@ -34,7 +32,7 @@ class SurveyController extends Component {
     await axios
       .get(config.baseurl + "access/?code=" + accessCode)
       .then(res => {
-        // console.log(res.data.isAuthenticated);
+        console.log(res.data);
         handleLogin(
           res.data.isAuthenticated,
           res.data.uid,
@@ -49,7 +47,7 @@ class SurveyController extends Component {
   validateCredentials = async (email, password) => {
     var bodyFormData = new FormData();
     var handleLogin = this.handleLogin;
-    bodyFormData.set("emailId", email);
+    bodyFormData.set("email", email);
     bodyFormData.set("password", password);
     await axios({
       method: "post",
@@ -69,13 +67,14 @@ class SurveyController extends Component {
       });
   };
 
-  handleLogin = (isAuthenticated, uid, alertMsg) => {
+  handleLogin = (isAuthenticated, uid, role, alertMsg) => {
     if (isAuthenticated) {
-      this.setState({ uid: uid, isLoggedIn: true });
+      this.setState({ uid, role, isLoggedIn: true });
     } else if (uid !== "") {
       alert(alertMsg);
       this.setState({ isLoggedIn: false });
     } else {
+      alert(alertMsg);
       this.setState({ isLoggedIn: false });
     }
   };
@@ -83,7 +82,7 @@ class SurveyController extends Component {
   handleSaveDraft = async e => {
     await axios
       .post(config.baseurl + "save_draft/", {
-        uid: this.state.uid,
+        uid: this.state.user.uid,
         answers: this.state.answers
       })
       .catch(res => {
@@ -113,14 +112,6 @@ class SurveyController extends Component {
 
   handleInviteUserToggle = () => {
     this.setState({ inviteUserToggle: true });
-  };
-
-  handleInviteUser = async inviteData => {
-    inviteData.ref = this.state.uid;
-    console.log(inviteData);
-    await axios.post(config.baseurl + "register/", inviteData).then(res => {
-      console.log(res.data);
-    });
   };
 
   updateAnswers = e => {
@@ -185,6 +176,7 @@ class SurveyController extends Component {
             <InviteUser
               handleInviteUser={this.handleInviteUser}
               handleLogout={this.handleLogout}
+              uid={this.state.uid}
             />
           </Container>
         );
