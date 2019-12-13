@@ -4,6 +4,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import Survey from "./subComponents/Survey";
 import SurveyList from "./subComponents/SurveyList";
 import InviteUser from "./subComponents/InviteUser";
+import AdminPanel from "./AdminPanel";
 import axios from "axios";
 
 var surveyData = require("../data/surveyData.json");
@@ -22,7 +23,8 @@ class SurveyController extends Component {
       isLoggedIn: null,
       selectedSurveyId: "",
       isSubmitted: false,
-      inviteUserToggle: false
+      inviteUserNav: false,
+      adminPanelNav: false
     };
   }
   // operations done on page load
@@ -111,7 +113,11 @@ class SurveyController extends Component {
   };
 
   resetSurveyList = () => {
-    this.setState({ selectedSurveyId: "" });
+    this.setState({
+      selectedSurveyId: "",
+      inviteUserNav: false,
+      superAdminNav: false
+    });
   };
 
   // page selection methods
@@ -120,8 +126,12 @@ class SurveyController extends Component {
     this.setState({ selectedSurveyId: selectedSurveyId });
   };
 
-  handleInviteUserToggle = () => {
-    this.setState({ inviteUserToggle: true });
+  handleInviteUserNav = () => {
+    this.setState({ inviteUserNav: true });
+  };
+
+  handleAdminPanelNav = () => {
+    this.setState({ adminPanelNav: true });
   };
 
   render() {
@@ -149,13 +159,23 @@ class SurveyController extends Component {
             />
           </Container>
         );
-      } else if (this.state.inviteUserToggle === true && this.state.role < 2) {
+      } else if (this.state.inviteUserNav === true && this.state.role < 2) {
         currentDisplay = (
           <Container>
             <InviteUser
               handleInviteUser={this.handleInviteUser}
               handleLogout={this.handleLogout}
               uid={this.state.uid}
+              resetSurveyList={this.resetSurveyList}
+            />
+          </Container>
+        );
+      } else if (this.state.adminPanelNav === true && this.state.role < 2) {
+        currentDisplay = (
+          <Container>
+            <AdminPanel
+              uid={this.state.uid}
+              resetSurveyList={this.resetSurveyList}
             />
           </Container>
         );
@@ -167,7 +187,8 @@ class SurveyController extends Component {
               userRole={this.state.role}
               handleOnClick={this.handleSurveySelect}
               handleLogout={this.handleLogout}
-              handleInviteUserToggle={this.handleInviteUserToggle}
+              handleInviteUserNav={this.handleInviteUserNav}
+              handleAdminPanelNav={this.handleAdminPanelNav}
               surveyPrivileges={this.state.surveyPrivileges}
               surveyReference={config.surveyReference}
             />

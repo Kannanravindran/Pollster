@@ -118,6 +118,17 @@ class InviteUser extends React.Component {
           <br />
           <Row>
             <Col>
+              <input
+                className="btn btn-outline-secondary survey-item"
+                type="button"
+                value="Exit"
+                onClick={this.props.resetSurveyList}
+              />
+            </Col>
+          </Row>
+          <br />
+          <Row>
+            <Col>
               <Button
                 className="btn btn-outline-danger survey-item transparent"
                 onClick={this.props.handleLogout}

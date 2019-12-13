@@ -7,16 +7,13 @@ class SurveyList extends React.Component {
     super(props);
   }
 
-  inviteUserComponent = () => {
+  renderAdminComponent = (text, handler) => {
     if (this.props.userRole < 2) {
       return (
         <Row>
           <Col>
-            <Button
-              className="btn btn-secondary survey-item"
-              onClick={this.props.handleInviteUserToggle}
-            >
-              Invite user
+            <Button className="btn btn-secondary survey-item" onClick={handler}>
+              {text}
             </Button>
           </Col>
         </Row>
@@ -70,7 +67,15 @@ class SurveyList extends React.Component {
           <br />
           {this.displaySelectiveSurveys()}
 
-          {this.inviteUserComponent()}
+          {this.renderAdminComponent(
+            "Invite user",
+            this.props.handleInviteUserNav
+          )}
+          <br />
+          {this.renderAdminComponent(
+            "Admin Panel",
+            this.props.handleAdminPanelNav
+          )}
           <br />
           <Row>
             <Col>
