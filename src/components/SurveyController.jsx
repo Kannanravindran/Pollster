@@ -12,7 +12,7 @@ var config = require("../config.json");
 class SurveyController extends Component {
   constructor(props) {
     super(props);
-    //
+
     this.state = {
       email: "",
       password: "",
@@ -20,12 +20,22 @@ class SurveyController extends Component {
       role: "",
       answers: {},
       isLoggedIn: null,
-      surveyId: "",
+      selectedSurveyId: "",
       isSubmitted: false,
-      inviteUserToggle: true
+      inviteUserToggle: false
     };
   }
+  // operations done on page load
+  componentDidMount = () => {
+    const accesscode = this.props.accessCode;
+    if (accesscode !== "" && !this.state.isLoggedIn) {
+      this.validateAccessCode(accesscode);
+    } else {
+      this.setState({ isLoggedIn: false });
+    }
+  };
 
+  // Multiple methods to authenticate the user
   validateAccessCode = async accessCode => {
     // console.log("validation: ", accessCode);
     var handleLogin = this.handleLogin;
@@ -36,11 +46,14 @@ class SurveyController extends Component {
         handleLogin(
           res.data.isAuthenticated,
           res.data.uid,
+          res.data.role,
+          res.data.surveyPrivileges,
           "invalid access code"
         );
       })
       .catch(err => {
         console.error("error occured here ", err);
+        this.setState({ isLoggedIn: false });
       });
   };
 
@@ -59,17 +72,21 @@ class SurveyController extends Component {
         handleLogin(
           res.data.isAuthenticated,
           res.data.uid,
+          res.data.role,
+          res.data.surveyPrivileges,
           "invalid credentials"
         );
       })
       .catch(res => {
         console.log(res);
+        this.setState({ isLoggedIn: false });
       });
   };
 
-  handleLogin = (isAuthenticated, uid, role, alertMsg) => {
+  // methods that handle login and logout
+  handleLogin = (isAuthenticated, uid, role, surveyPrivileges, alertMsg) => {
     if (isAuthenticated) {
-      this.setState({ uid, role, isLoggedIn: true });
+      this.setState({ uid, role, surveyPrivileges, isLoggedIn: true });
     } else if (uid !== "") {
       alert(alertMsg);
       this.setState({ isLoggedIn: false });
@@ -79,70 +96,32 @@ class SurveyController extends Component {
     }
   };
 
-  handleSaveDraft = async e => {
-    await axios
-      .post(config.baseurl + "save_draft/", {
-        uid: this.state.user.uid,
-        answers: this.state.answers
-      })
-      .catch(res => {
-        console.log(res.data);
-      });
-    this.setState({ surveyId: "" });
-    e.preventDefault();
-  };
-
-  componentDidMount = () => {
-    const accesscode = this.props.accessCode;
-    if (accesscode !== "" && !this.state.isLoggedIn) {
-      this.validateAccessCode(accesscode);
-    } else {
-      this.setState({ isLoggedIn: false });
-    }
-  };
-
   handleLogout = () => {
     this.setState({ isLoggedIn: false, uid: "" });
   };
 
+  // method that handles survey response submission
+  handleSurveySubmission = answers => {
+    console.log("answers: ", answers);
+    answers.uid = this.state.uid;
+    axios.post(config.baseurl + "store-survey/", answers).catch(res => {
+      console.log(res.data);
+    });
+    this.setState({ selectedSurveyId: "" });
+  };
+
+  resetSurveyList = () => {
+    this.setState({ selectedSurveyId: "" });
+  };
+
+  // page selection methods
   handleSurveySelect = e => {
-    var surveyid = e.target.getAttribute("surveyid");
-    this.setState({ surveyId: surveyid });
+    var selectedSurveyId = e.target.getAttribute("surveyid");
+    this.setState({ selectedSurveyId: selectedSurveyId });
   };
 
   handleInviteUserToggle = () => {
     this.setState({ inviteUserToggle: true });
-  };
-
-  updateAnswers = e => {
-    var answers = this.state.answers;
-    var value = e.target.value;
-    var question = e.target.getAttribute("data-question");
-    var survey = e.target.getAttribute("data-survey");
-    if (!(survey in answers)) {
-      answers[survey] = {};
-    }
-    answers[survey][question] = value;
-    this.setState({ answers });
-  };
-
-  handleRangeSelect = e => {
-    this.updateAnswers(e);
-  };
-
-  handleRadioInput = e => {
-    if (e.target.checked) {
-      e.target.parentNode.classList.add("label-checked");
-    }
-    var radios = Array.from(document.querySelectorAll('input[type="radio"]'));
-    radios.forEach(radio => {
-      if (radio.checked) {
-        radio.parentNode.classList.add("label-checked");
-      } else {
-        radio.parentNode.classList.remove("label-checked");
-      }
-    });
-    this.updateAnswers(e);
   };
 
   render() {
@@ -159,18 +138,18 @@ class SurveyController extends Component {
       this.state.isLoggedIn === true
       // && this.state.isSubmitted === false
     ) {
-      if (this.state.surveyId !== "") {
+      if (this.state.selectedSurveyId !== "") {
         currentDisplay = (
           <Container>
             <Survey
-              handleOnClick={this.handleRadioInput}
-              handleOnRange={this.handleRangeSelect}
-              handleSaveDraft={this.handleSaveDraft}
-              surveyData={surveyData[this.state.surveyId]}
+              handleSurveySubmission={this.handleSurveySubmission}
+              surveyData={surveyData[this.state.selectedSurveyId]}
+              uid={this.state.uid}
+              resetSurveyList={this.resetSurveyList}
             />
           </Container>
         );
-      } else if (this.state.inviteUserToggle === true) {
+      } else if (this.state.inviteUserToggle === true && this.state.role < 2) {
         currentDisplay = (
           <Container>
             <InviteUser
@@ -185,9 +164,12 @@ class SurveyController extends Component {
           <Container>
             <SurveyList
               isSubmitted={this.state.isSubmitted}
+              userRole={this.state.role}
               handleOnClick={this.handleSurveySelect}
               handleLogout={this.handleLogout}
               handleInviteUserToggle={this.handleInviteUserToggle}
+              surveyPrivileges={this.state.surveyPrivileges}
+              surveyReference={config.surveyReference}
             />
           </Container>
         );

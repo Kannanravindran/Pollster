@@ -69,7 +69,4 @@ class Login extends Component {
   }
 }
 
-// TODO: validate input field
-// TODO: signIn without google to create firebase account;
-
 export default Login;

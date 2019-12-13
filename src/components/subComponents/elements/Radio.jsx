@@ -7,21 +7,39 @@ const Radio = ({
   survey,
   value,
   text,
-  handleOnClick
+  handleOnClick,
+  disabled
 }) => {
-  return (
-    <label className="check-container">
-      <input
-        type="radio"
-        name={name}
-        data-question={question}
-        data-survey={survey}
-        value={value}
-        onClick={handleOnClick}
-      />
-      {text}
-    </label>
-  );
+  if (disabled) {
+    return (
+      <label className="check-container-disabled">
+        <input
+          type="radio"
+          name={name}
+          data-question={question}
+          data-survey={survey}
+          value={value}
+          onClick={handleOnClick}
+          disabled={disabled}
+        />
+        {text}
+      </label>
+    );
+  } else {
+    return (
+      <label className="check-container">
+        <input
+          type="radio"
+          name={name}
+          data-question={question}
+          data-survey={survey}
+          value={value}
+          onClick={handleOnClick}
+        />
+        {text}
+      </label>
+    );
+  }
 };
 
 export default Radio;

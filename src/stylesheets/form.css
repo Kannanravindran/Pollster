@@ -13,6 +13,16 @@
   opacity: 1;
 }
 
+.slider:disabled::-webkit-slider-thumb {
+  background: rgb(107, 107, 107);
+  cursor: not-allowed;
+}
+
+.slider:disabled::-moz-range-thumb {
+  background: rgb(107, 107, 107);
+  cursor: not-allowed;
+}
+
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -40,6 +50,9 @@ h1 {
 .survey-item {
   width: 50%;
   font-size: 25px;
+}
+.transparent:not(:hover) {
+  background-color: transparent !important;
 }
 
 .survey-list {

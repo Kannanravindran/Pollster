@@ -22,8 +22,8 @@ class InviteUser extends React.Component {
     this.setState({ surveyids });
   };
 
-  handleInviteData = e => {
-    let toastMsg = "";
+  handleInviteData = async e => {
+    var toastMsg = "";
     if (this.state.surveyids.length > 0) {
       const email = this.refs.email.value;
       let inviteData = this.state;
@@ -31,12 +31,22 @@ class InviteUser extends React.Component {
       inviteData.ref = this.props.uid;
       axios.post(config.baseurl + "register/", inviteData).then(res => {
         console.log(res.data);
+        if (res.data.isInvited) {
+          toastMsg = email + " has been invited";
+          this.setState({ toastMsg, surveyids: [] });
+        } else {
+          toastMsg = "error inviting " + email;
+          this.setState({ toastMsg });
+        }
       });
-      this.setState({ toastMsg, surveyids: [] });
       e.target.reset();
     } else {
       toastMsg = "select at least one survey";
+      this.setState({ toastMsg, surveyids: [] });
     }
+    setTimeout(() => {
+      this.setState({ toastMsg: "" });
+    }, 5000);
     e.preventDefault();
   };
 
@@ -109,7 +119,7 @@ class InviteUser extends React.Component {
           <Row>
             <Col>
               <Button
-                className="btn btn-dark survey-item"
+                className="btn btn-outline-danger survey-item transparent"
                 onClick={this.props.handleLogout}
               >
                 Logout

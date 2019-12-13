@@ -8,7 +8,8 @@ const Slider = ({
   question,
   survey,
   onInput,
-  onChange
+  onChange,
+  disabled
 }) => {
   return (
     <input
@@ -23,6 +24,7 @@ const Slider = ({
       onChange={onChange}
       data-question={question}
       data-survey={survey}
+      disabled={disabled}
     />
   );
 };

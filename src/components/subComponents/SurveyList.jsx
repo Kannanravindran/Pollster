@@ -7,6 +7,57 @@ class SurveyList extends React.Component {
     super(props);
   }
 
+  inviteUserComponent = () => {
+    if (this.props.userRole < 2) {
+      return (
+        <Row>
+          <Col>
+            <Button
+              className="btn btn-secondary survey-item"
+              onClick={this.props.handleInviteUserToggle}
+            >
+              Invite user
+            </Button>
+          </Col>
+        </Row>
+      );
+    } else {
+      return;
+    }
+  };
+
+  renderSurveyButton = surveyId => {
+    return (
+      <React.Fragment key={surveyId}>
+        <Row>
+          <Col>
+            <div>
+              <Button
+                className="btn btn-info survey-item"
+                onClick={this.props.handleOnClick}
+                surveyid={surveyId}
+              >
+                {this.props.surveyReference[surveyId]}
+              </Button>
+            </div>
+          </Col>
+        </Row>
+        <br />
+      </React.Fragment>
+    );
+  };
+
+  displaySelectiveSurveys = () => {
+    console.log(this.props.surveyPrivileges);
+    return (
+      <React.Fragment>
+        {this.props.surveyPrivileges.map(survey =>
+          this.renderSurveyButton(survey)
+        )}
+      </React.Fragment>
+    );
+  };
+
   render() {
     return (
       <div className="card survey-list">
@@ -17,48 +68,14 @@ class SurveyList extends React.Component {
             </Col>
           </Row>
           <br />
-          <Row>
-            <Col>
-              <div>
-                <Button
-                  className="btn btn-info survey-item"
-                  onClick={this.props.handleOnClick}
-                  surveyid="1"
-                >
-                  Guacamole Survey
-                </Button>
-              </div>
-            </Col>
-          </Row>
+          {this.displaySelectiveSurveys()}
+
+          {this.inviteUserComponent()}
           <br />
           <Row>
             <Col>
               <Button
-                className="btn btn-info survey-item"
-                onClick={this.props.handleOnClick}
-                surveyid="2"
-              >
-                Driving Survey
-              </Button>
-            </Col>
-          </Row>
-          <br />
-          <br />
-          <Row>
-            <Col>
-              <Button
-                className="btn btn-secondary survey-item"
-                onClick={this.props.handleInviteUserToggle}
-              >
-                Invite user
-              </Button>
-            </Col>
-          </Row>
-          <br />
-          <Row>
-            <Col>
-              <Button
-                className="btn btn-dark survey-item"
+                className="btn btn-outline-danger survey-item transparent"
                 onClick={this.props.handleLogout}
               >
                 Logout

@@ -126,6 +126,34 @@ label {
   background-color: rgb(48, 94, 153);
 }
 
+.check-container-disabled {
+  display: block;
+  position: relative;
+  background-color: #ccc;
+  cursor: not-allowed;
+  font-size: 20px;
+  text-align: center;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  max-width: 50%;
+}
+
+.check-container-disabled:not(:last-child) {
+  margin-bottom: 10px;
+}
+
+.check-container-disabled input {
+  position: absolute;
+  opacity: 0;
+  cursor: not-allowed;
+}
+
+.check-container-disabled.label-checked {
+  background-color: rgb(107, 107, 107);
+}
+
 .submitButton {
   padding: 0px 0px;
   margin: 20px;
@@ -149,6 +177,9 @@ label {
   background: rgb(59, 52, 182);
 }
 
+.submitButton:disabled {
+  background: rgb(46, 46, 46);
+}
 .login-button {
   padding: 13px 25px;
   margin: 20px;
