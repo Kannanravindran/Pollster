@@ -19,7 +19,6 @@ class SurveyController extends Component {
       password: "",
       uid: "",
       role: "",
-      answers: {},
       isLoggedIn: null,
       selectedSurveyId: "",
       isSubmitted: false,
@@ -50,6 +49,7 @@ class SurveyController extends Component {
           res.data.uid,
           res.data.role,
           res.data.surveyPrivileges,
+          res.data.adminPrivileges,
           "invalid access code"
         );
       })
@@ -76,6 +76,7 @@ class SurveyController extends Component {
           res.data.uid,
           res.data.role,
           res.data.surveyPrivileges,
+          res.data.adminPrivileges,
           "invalid credentials"
         );
       })
@@ -86,9 +87,22 @@ class SurveyController extends Component {
   };
 
   // methods that handle login and logout
-  handleLogin = (isAuthenticated, uid, role, surveyPrivileges, alertMsg) => {
+  handleLogin = (
+    isAuthenticated,
+    uid,
+    role,
+    surveyPrivileges,
+    adminPrivileges,
+    alertMsg
+  ) => {
     if (isAuthenticated) {
-      this.setState({ uid, role, surveyPrivileges, isLoggedIn: true });
+      this.setState({
+        uid,
+        role,
+        surveyPrivileges,
+        adminPrivileges,
+        isLoggedIn: true
+      });
     } else if (uid !== "") {
       alert(alertMsg);
       this.setState({ isLoggedIn: false });
@@ -127,6 +141,7 @@ class SurveyController extends Component {
   };
 
   handleInviteUserNav = () => {
+    console.log(this.state);
     this.setState({ inviteUserNav: true });
   };
 
@@ -167,6 +182,7 @@ class SurveyController extends Component {
               handleLogout={this.handleLogout}
               uid={this.state.uid}
               resetSurveyList={this.resetSurveyList}
+              adminPrivileges={this.state.adminPrivileges}
             />
           </Container>
         );

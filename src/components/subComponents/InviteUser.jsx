@@ -11,6 +11,11 @@ class InviteUser extends React.Component {
     this.state = { toastMsg: "", surveyids: [] };
   }
 
+  adminRightsCheck = e => {
+    const hasRights = this.props.adminPrivileges.includes(e);
+    return !hasRights;
+  };
+
   handleCheckboxSelect = e => {
     let surveyids = this.state.surveyids;
     const newSurveyid = e.target.value;
@@ -88,6 +93,7 @@ class InviteUser extends React.Component {
                       name="surveySelect"
                       value="1"
                       onClick={this.handleCheckboxSelect}
+                      disabled={this.adminRightsCheck("1")}
                     />{" "}
                     Guacamole Survey
                   </label>
@@ -99,6 +105,7 @@ class InviteUser extends React.Component {
                       name="surveySelect"
                       value="2"
                       onClick={this.handleCheckboxSelect}
+                      disabled={this.adminRightsCheck("2")}
                     />{" "}
                     Drive Survey
                   </label>
