@@ -28,6 +28,7 @@ class SurveyController extends Component {
   }
   // operations done on page load
   componentDidMount = () => {
+    document.title = "Unmatched Survey";
     const accesscode = this.props.accessCode;
     if (accesscode !== "" && !this.state.isLoggedIn) {
       this.validateAccessCode(accesscode);
