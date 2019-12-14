@@ -26,3 +26,8 @@ This runs the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 This application requires a backend to run the complete stack. Visit this [link](https://github.com/Kannanravindran/Pollster-backend "link") for instruction to run the backend
+
+
+## App Structure
+
+![App structure](https://raw.githubusercontent.com/Kannanravindran/Pollster/master/src/assets/app_struct.png)
