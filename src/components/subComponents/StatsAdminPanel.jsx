@@ -26,7 +26,7 @@ class StatsAdminPanel extends Component {
   getBarChart = surveyId => {
     const options = {
       animationEnabled: true,
-      exportEnabled: true,
+      exportEnabled: false,
       theme: "light2", //"light1", "dark1", "dark2"
       title: {
         text: "Simple Column Chart with Index Labels"
