@@ -4,41 +4,18 @@ import "react-tabs/style/react-tabs.css";
 import Table from "react-bootstrap/Table";
 import axios from "axios";
 import SurveyAdminPanel from "./subComponents/SurveyAdminPanel";
+import StatsAdminPanel from "./subComponents/StatsAdminPanel";
 
 var config = require("../config.json");
 
 class AdminPanel extends Component {
-  _isMounted = false;
   constructor(props) {
     super(props);
 
     this.state = {};
   }
 
-  storeAnswers = surveyId => {
-    axios
-      .get(config.baseurl + "admin/get-all-response/", {
-        params: {
-          uid: this.props.uid,
-          surveyid: surveyId
-        }
-      })
-      .then(res => {
-        var data = res.data.answers;
-        console.log(data);
-        this.setState({ [surveyId]: data });
-        console.log(this.state);
-      });
-  };
-
-  componentDidMount = () => {
-    this._isMounted = true;
-    this.storeAnswers("1");
-    this.storeAnswers("2");
-  };
-  componentWillUnmount = () => {
-    this._isMounted = false;
-  };
+  componentDidMount = () => {};
 
   generateRows = entry => {
     return (
@@ -77,11 +54,19 @@ class AdminPanel extends Component {
         <Tabs>
           <TabList>
             <Tab>Response</Tab>
-            {/* <Tab>Stats</Tab> */}
-            {/* <Tab>Super admin</Tab> */}
+            <Tab>Stats</Tab>
           </TabList>
           <TabPanel>
-            <SurveyAdminPanel uid={this.props.uid} />
+            <SurveyAdminPanel
+              uid={this.props.uid}
+              adminPrivileges={this.props.adminPrivileges}
+            />
+          </TabPanel>
+          <TabPanel>
+            <StatsAdminPanel
+              uid={this.props.uid}
+              adminPrivileges={this.props.adminPrivileges}
+            />
           </TabPanel>
         </Tabs>
       </div>

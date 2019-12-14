@@ -19,7 +19,7 @@ class SurveyAdminPanel extends Component {
       .get(config.baseurl + "admin/get-all-response/", {
         params: {
           uid: this.props.uid,
-          surveyid: surveyId
+          surveyid: surveyId,
         }
       })
       .then(res => {
@@ -32,11 +32,16 @@ class SurveyAdminPanel extends Component {
 
   componentDidMount = () => {
     this._isMounted = true;
-    this.storeAnswers("1");
-    this.storeAnswers("2");
+    this.props.adminPrivileges.forEach(survey => {
+      this.storeAnswers(survey);
+    });
   };
   componentWillUnmount = () => {
     this._isMounted = false;
+  };
+
+  activateTab = e => {
+    return !this.props.adminPrivileges.includes(e);
   };
 
   generateRows = entry => {
@@ -72,15 +77,14 @@ class SurveyAdminPanel extends Component {
 
   render() {
     return (
-      
-        <Tabs>
-          <TabList>
-            <Tab>Guacamole</Tab>
-            <Tab>Driving</Tab>
-          </TabList>
-          <TabPanel>{this.getResponseTable("1")}</TabPanel>
-          <TabPanel>{this.getResponseTable("2")}</TabPanel>
-        </Tabs>
+      <Tabs>
+        <TabList>
+          <Tab disabled={this.activateTab("1")}>Guacamole</Tab>
+          <Tab disabled={this.activateTab("2")}>Driving</Tab>
+        </TabList>
+        <TabPanel>{this.getResponseTable("1")}</TabPanel>
+        <TabPanel>{this.getResponseTable("2")}</TabPanel>
+      </Tabs>
     );
   }
 }

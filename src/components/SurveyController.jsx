@@ -192,6 +192,7 @@ class SurveyController extends Component {
           <Container>
             <AdminPanel
               uid={this.state.uid}
+              adminPrivileges={this.state.adminPrivileges}
               resetSurveyList={this.resetSurveyList}
             />
           </Container>
