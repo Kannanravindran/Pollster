@@ -69,6 +69,13 @@ class AdminPanel extends Component {
             />
           </TabPanel>
         </Tabs>
+        <input
+          className="submitButton"
+          style={{ position: "absolute", right: "0", bottom: "0" }}
+          type="button"
+          value="Exit"
+          onClick={this.props.resetSurveyList}
+        />
       </div>
     );
   }

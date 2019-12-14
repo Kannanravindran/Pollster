@@ -19,7 +19,7 @@ class SurveyAdminPanel extends Component {
       .get(config.baseurl + "admin/get-all-response/", {
         params: {
           uid: this.props.uid,
-          surveyid: surveyId,
+          surveyid: surveyId
         }
       })
       .then(res => {
@@ -63,8 +63,8 @@ class SurveyAdminPanel extends Component {
           <thead>
             <tr>
               <th>Email</th>
-              <th>Question 1</th>
-              <th>Question 2</th>
+              <th>Liking</th>
+              <th>Frequency</th>
             </tr>
           </thead>
           <tbody>

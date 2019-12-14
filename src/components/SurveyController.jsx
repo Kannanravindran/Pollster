@@ -130,7 +130,7 @@ class SurveyController extends Component {
     this.setState({
       selectedSurveyId: "",
       inviteUserNav: false,
-      superAdminNav: false
+      adminPanelNav: false
     });
   };
 
