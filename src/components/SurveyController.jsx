@@ -183,6 +183,7 @@ class SurveyController extends Component {
               uid={this.state.uid}
               resetSurveyList={this.resetSurveyList}
               adminPrivileges={this.state.adminPrivileges}
+              role={this.state.role}
             />
           </Container>
         );

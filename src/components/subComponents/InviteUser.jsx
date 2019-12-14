@@ -1,5 +1,6 @@
 import React from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
+import Radio from "./elements/Radio";
 import "../../stylesheets/form.css";
 import axios from "axios";
 var config = require("../../config.json");
@@ -8,12 +9,58 @@ class InviteUser extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { toastMsg: "", surveyids: [] };
+    this.state = {
+      toastMsg: "",
+      surveyids: [],
+      handleOnSubmit: this.handleInviteData
+    };
   }
 
   adminRightsCheck = e => {
     const hasRights = this.props.adminPrivileges.includes(e);
     return !hasRights;
+  };
+
+  handleRadioInput = e => {
+    if (e.target.value === "admin") {
+      this.setState({ handleOnSubmit: this.handleUpgradeData });
+    } else {
+      this.setState({ handleOnSubmit: this.handleInviteData });
+    }
+  };
+
+  renderSuperAdminComponent = () => {
+    var superAdminContent = "";
+    if (this.props.role == 0) {
+      superAdminContent = (
+        <Col md="4">
+          <Row>
+            <label>
+              <input
+                type="radio"
+                name="upgrade"
+                value="feedback"
+                onClick={this.handleRadioInput}
+                defaultChecked
+              />{" "}
+              feedback
+            </label>
+          </Row>
+          <Row>
+            <label>
+              <input
+                type="radio"
+                name="upgrade"
+                value="admin"
+                onClick={this.handleRadioInput}
+              />{" "}
+              admin
+            </label>
+          </Row>
+        </Col>
+      );
+    }
+    return superAdminContent;
   };
 
   handleCheckboxSelect = e => {
@@ -27,7 +74,36 @@ class InviteUser extends React.Component {
     this.setState({ surveyids });
   };
 
-  handleInviteData = async e => {
+  handleUpgradeData = e => {
+    var toastMsg = "";
+    if (this.state.surveyids.length > 0) {
+      const email = this.refs.email.value;
+      let upgradeData = this.state;
+      upgradeData.email = email;
+      upgradeData.ref = this.props.uid;
+      axios.post(config.baseurl + "admin/upgrade/", upgradeData).then(res => {
+        console.log(res.data);
+        if (res.data.isUpgraded) {
+          toastMsg = email + " has been upgraded";
+          this.setState({ toastMsg, surveyids: [] });
+        } else {
+          toastMsg = "error upgrading " + email;
+          this.setState({ toastMsg });
+        }
+      });
+      e.target.reset();
+    } else {
+      toastMsg = "select at least one survey";
+      this.setState({ toastMsg, surveyids: [] });
+    }
+    setTimeout(() => {
+      this.setState({ toastMsg: "" });
+    }, 5000);
+    e.preventDefault();
+    e.preventDefault();
+  };
+
+  handleInviteData = e => {
     var toastMsg = "";
     if (this.state.surveyids.length > 0) {
       const email = this.refs.email.value;
@@ -61,11 +137,11 @@ class InviteUser extends React.Component {
         <Container>
           <Row>
             <Col>
-              <h1>Enter the email id of the feedback user</h1>
+              <h1>Enter the email id of the user</h1>
             </Col>
           </Row>
           <br />
-          <form onSubmit={this.handleInviteData}>
+          <form onSubmit={this.state.handleOnSubmit}>
             <Row>
               <Col>
                 <input
@@ -85,7 +161,7 @@ class InviteUser extends React.Component {
             </Row>
             <br />
             <Row className="justify-content-md-center">
-              <Col md="3">
+              <Col md="4">
                 <Row>
                   <label>
                     <input
@@ -111,6 +187,7 @@ class InviteUser extends React.Component {
                   </label>
                 </Row>
               </Col>
+              {this.renderSuperAdminComponent()}
             </Row>
             <Row>
               <Col>
